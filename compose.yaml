@@ -1,0 +1,37 @@
+version: '3'
+
+services:
+
+  php:
+    build: admin
+    container_name: ffty-mono-admin
+    restart: unless-stopped
+    environment:
+      - XDEBUG_CONFIG="client_host=172.59.0.1"
+    volumes:
+      - ./admin:/var/admin
+    networks:
+      internal:
+        ipv4_address: 172.59.0.2
+
+  mailer:
+    image: axllent/mailpit
+    container_name: ffty-mono-mailer
+    restart: unless-stopped
+    ports:
+      - "1025"
+      - "8025"
+    environment:
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
+    networks:
+      internal:
+        ipv4_address: 172.59.0.3
+
+networks:
+  internal:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.59.0.0/16
+          gateway: 172.59.0.1
