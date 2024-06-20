@@ -2,10 +2,74 @@
 
 Mono repository
 
-- Website
-- CLI
+- Admin App (CLI)
+- Website (in planning)
 
-## Console Commands
+## Accounting
+
+### Financial Liability
+
+Datatable fields:
+
+- `id`
+- `member` (n:1)
+- `amount` (integer)
+- `type` (string) / "subscription", "ticketing", "merchandise"
+- `reason` (string) - transaction reason
+- `comment` (string) - additional information
+- `dueAt` (datetime, nullable)
+- `paidAt` (datetime, nullable)
+- `transactions` (1:n)
+
+| id | member_id | amount | type         | reason              | comment     | dueAt               | paidAt              | tags                   |
+|----|-----------|--------|--------------|---------------------|-------------|---------------------|---------------------|------------------------|
+| 1  | 5         | 17200  | ticketing    | Dauerkarte 2024     | Block 45    | 2024-06-06 23:59:59 | <null>              | ["season_ticket_2024"] |
+| 2  | 8         | 2500   | subscription | Mitgliedschaft 2024 | <null>      | 2024-06-30 23:59:59 | <null>              | ["member_2024"]        |
+| 3  | 8         | 17200  | ticketing    | Dauerkarte 2024     | Block 38    | 2024-06-06 23:59:59 | 2024-06-05 12:13:14 | ["season_ticket_2024"] |
+| 4  | 8         | 5000   | merchandise  | Shirt Kurve 2024    | 2x L        | 2024-06-06 23:59:59 | 2024-06-18 14:15:16 | ["shirt_effv_2024"]    |
+| 4  | 14        | 5000   | merchandise  | Shirt Kurve 2024    | 1x S, 1x XL | 2024-06-06 23:59:59 | <null>              | ["shirt_effv_2024"]    |
+
+### Financial Transaction
+
+Datatable fields:
+
+- `id`
+- `method` ("bank_transfer", "paypal")
+- `reference` (IBAN or PayPal handle)
+- `owner` (`string`) / account owner
+- `member` (n:1, nullable)
+- `reason` (string, nullable)
+- `amount` (integer)
+- `paidAt` (datetime)
+- `tags`
+
+| id | member_id | liablilty_id | method        | reference       | owner    | reason                      | amount | paidAt              | tags                   |
+|----|-----------|--------------|---------------|-----------------|----------|-----------------------------|--------|---------------------|------------------------|
+| 1  | 8         | 3            | bank_transfer | <null>          | John Doe | Dauerkarte 2024             | 17200  | 2024-06-05 12:13:14 | ["season_ticket_2024"] |
+| 2  | 8         | 4            | bank_transfer | <null>          | John Doe | Shirt Kurve 2024            | 5000   | 2024-06-18 14:15:16 | ["shirt_effv_2024"]    |
+| 3  | 14        | <null>       | paypal        | julia@jones.com | Jane Doe | Shirt Kurve 2024 / Jane Doe | 2500   | 2024-06-19 13:14:15 | ["shirt_effv_2024"]    |
+
+**Mapping**
+
+Map weekly CSV export file to database table
+
+Process only CSV rows of incoming payments (check column "Buchungstext" for value "Gutschrift").
+
+Mapping of CSV values to datatable field:
+
+- column `Buchungstag` to field `paidAt`
+- column `Name Zahlungsbeteiligter` to field `name`
+- ~~column `IBAN Zahlungsbeteiligter` to field `reference`~~; IBAN value currently not filled in CSV export
+- column `Verwendungszweck` to field `reason`
+- column `Betrag` to field `amount` (convert double to integer, s. notes below)
+
+Notes:
+
+`amount` is an integer field. So multiply the `double` value `Betrag` with `100` and convert to `integer`.
+
+## Admin App
+
+### Console Commands
 
 Send an email with template `template_name` to all members:
 
@@ -19,7 +83,7 @@ Send an email only to members with tag 'tag_1':
 bin/console app:email:send template_name -f tag_1
 ```
 
-## Template Variables
+### Template Variables
 
 - `member` - Member entity
 - `ticket` - SeasonTicket entity

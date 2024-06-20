@@ -192,6 +192,6 @@ class Member
 
     public function __toString(): string
     {
-        return sprintf('%s %s.', $this->getFirstName(), substr($this->getLastName(), 0, 1));
+        return sprintf("%s %s", $this->getFirstName(), $this->getLastName());
     }
 }

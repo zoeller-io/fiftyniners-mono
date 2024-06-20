@@ -10,6 +10,7 @@
         "doctrine/dbal": "^3",
         "doctrine/doctrine-bundle": "^2.12",
         "doctrine/orm": "^3.2",
+        "easycorp/easyadmin-bundle": "^4.10",
         "symfony/console": "7.1.*",
         "symfony/dotenv": "7.1.*",
         "symfony/finder": "7.1.*",
