@@ -9,7 +9,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: MemberRepository::class)]
-#[ORM\UniqueConstraint(name: "shortName", columns: ["short_name"])]
+#[ORM\UniqueConstraint(name: "emailAddress", columns: ["email_address"])]
 class Member
 {
     #[ORM\Id]
@@ -20,14 +20,17 @@ class Member
     #[ORM\Column(length: 255)]
     private ?string $firstName = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $middleName = null;
+
     #[ORM\Column(length: 255)]
     private ?string $lastName = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $shortName = null;
-
     #[ORM\Column(length: 255)]
     private ?string $emailAddress = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $bankAccountName = null;
 
     /**
      * @var Collection<int, SeasonTicket>
@@ -70,6 +73,18 @@ class Member
         return $this;
     }
 
+    public function getMiddleName(): ?string
+    {
+        return $this->middleName;
+    }
+
+    public function setMiddleName(?string $middleName): static
+    {
+        $this->middleName = $middleName;
+
+        return $this;
+    }
+
     public function getLastName(): ?string
     {
         return $this->lastName;
@@ -82,18 +97,6 @@ class Member
         return $this;
     }
 
-    public function getShortName(): ?string
-    {
-        return $this->shortName;
-    }
-
-    public function setShortName(string $shortName): static
-    {
-        $this->shortName = $shortName;
-
-        return $this;
-    }
-
     public function getEmailAddress(): ?string
     {
         return $this->emailAddress;
@@ -102,6 +105,18 @@ class Member
     public function setEmailAddress(string $emailAddress): static
     {
         $this->emailAddress = $emailAddress;
+
+        return $this;
+    }
+
+    public function getBankAccountName(): ?string
+    {
+        return $this->bankAccountName;
+    }
+
+    public function setBankAccountName(string $bankAccountName): static
+    {
+        $this->bankAccountName = $bankAccountName;
 
         return $this;
     }

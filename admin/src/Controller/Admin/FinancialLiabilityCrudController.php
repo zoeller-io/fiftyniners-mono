@@ -33,4 +33,5 @@ class FinancialLiabilityCrudController extends AbstractCrudController
             DateTimeField::new('paidAt'),
             ArrayField::new('tags'),
         ];
-    }}
+    }
+}

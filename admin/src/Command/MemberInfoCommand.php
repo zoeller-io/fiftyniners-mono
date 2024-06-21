@@ -70,7 +70,7 @@ class MemberInfoCommand extends Command
         foreach ($members as $member) {
             foreach ($member->getTags() as $tag) {
                 if (!in_array($tag, $tags, true)) {
-                    $tags[$tag][] = $member->getShortName();
+                    $tags[$tag][] = $member->getBankAccountName();
                 }
             }
             $i++;

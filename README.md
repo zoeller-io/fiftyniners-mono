@@ -7,6 +7,14 @@ Mono repository
 
 ## Accounting
 
+### Import Transactions
+
+Put weekly CSV export from bank account to folder `/tmp` and run
+
+```shell
+bin/console accounting:transactions:import
+```
+
 ### Financial Liability
 
 Datatable fields:
@@ -34,14 +42,16 @@ Datatable fields:
 Datatable fields:
 
 - `id`
+- `member` (n:1, nullable)
 - `method` ("bank_transfer", "paypal")
 - `reference` (IBAN or PayPal handle)
 - `owner` (`string`) / account owner
-- `member` (n:1, nullable)
 - `reason` (string, nullable)
 - `amount` (integer)
 - `paidAt` (datetime)
 - `tags`
+- `createdAt` (datetime)
+- `updatedAt` (datetime, nullable)
 
 | id | member_id | liablilty_id | method        | reference       | owner    | reason                      | amount | paidAt              | tags                   |
 |----|-----------|--------------|---------------|-----------------|----------|-----------------------------|--------|---------------------|------------------------|
@@ -58,7 +68,7 @@ Process only CSV rows of incoming payments (check column "Buchungstext" for valu
 Mapping of CSV values to datatable field:
 
 - column `Buchungstag` to field `paidAt`
-- column `Name Zahlungsbeteiligter` to field `name`
+- column `Name Zahlungsbeteiligter` to field `owner`
 - ~~column `IBAN Zahlungsbeteiligter` to field `reference`~~; IBAN value currently not filled in CSV export
 - column `Verwendungszweck` to field `reason`
 - column `Betrag` to field `amount` (convert double to integer, s. notes below)
@@ -67,9 +77,15 @@ Notes:
 
 `amount` is an integer field. So multiply the `double` value `Betrag` with `100` and convert to `integer`.
 
-## Admin App
+**Owner Mapping**
 
-### Console Commands
+- first check `bankAccountName`
+- then check for `<firstName> <lastName>` or `<lastName>, <firstName>`
+- then check for `<firstName> <middleName> <lastName>` or `<lastName>, <firstName> <middleName>`
+
+## Mailing
+
+### Send emails
 
 Send an email with template `template_name` to all members:
 
@@ -83,7 +99,7 @@ Send an email only to members with tag 'tag_1':
 bin/console app:email:send template_name -f tag_1
 ```
 
-### Template Variables
+Template variables:
 
 - `member` - Member entity
 - `ticket` - SeasonTicket entity
