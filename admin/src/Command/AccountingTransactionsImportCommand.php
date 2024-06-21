@@ -14,8 +14,6 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpKernel\KernelInterface;
-use Symfony\Component\Mailer\MailerInterface;
-use Twig\Environment;
 
 #[AsCommand(
     name: 'accounting:transactions:import',
@@ -26,8 +24,6 @@ class AccountingTransactionsImportCommand extends Command
     public function __construct(
         private readonly KernelInterface $kernel,
         private readonly EntityManagerInterface $entityManager,
-        private readonly Environment $twig,
-        private readonly MailerInterface $mailer,
         ?string $name = null
     ) {
         parent::__construct($name);
@@ -119,8 +115,10 @@ class AccountingTransactionsImportCommand extends Command
                         ->setReason($reason)
                         ->setCreatedAt(new \DateTimeImmutable())
                     ;
-                    $this->entityManager->persist($transaction);
-                    $this->entityManager->flush();
+                    if (!$isDryRun) {
+                        $this->entityManager->persist($transaction);
+                        $this->entityManager->flush();
+                    }
                     $imported++;
 
                     if (null === $member) {

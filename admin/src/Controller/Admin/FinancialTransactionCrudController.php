@@ -22,12 +22,12 @@ class FinancialTransactionCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         return [
-            IdField::new('id'),
+            IdField::new('id')->setDisabled(),
             AssociationField::new('member'),
             AssociationField::new('liability'),
 //            TextField::new('method'),
             TextField::new('reference'),
-            TextField::new('owner'),
+            TextField::new('owner')->hideOnIndex(),
             TextField::new('reason'),
             IntegerField::new('amount'),
             DateTimeField::new('paidAt')->setFormat('short', 'none'),

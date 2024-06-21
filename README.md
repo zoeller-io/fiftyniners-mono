@@ -15,6 +15,14 @@ Put weekly CSV export from bank account to folder `/tmp` and run
 bin/console accounting:transactions:import
 ```
 
+### Match Transations
+
+Try to match transactions with liabilities with
+
+```shell
+bin/console accounting:transactions:match
+```
+
 ### Financial Liability
 
 Datatable fields:

@@ -29,8 +29,8 @@ class FinancialLiabilityCrudController extends AbstractCrudController
             TextField::new('type'),
             TextField::new('reason'),
             TextField::new('comment'),
-            DateTimeField::new('dueAt'),
-            DateTimeField::new('paidAt'),
+            DateTimeField::new('dueAt')->setFormat('short', 'none'),
+            DateTimeField::new('paidAt')->setFormat('short', 'none'),
             ArrayField::new('tags'),
         ];
     }
