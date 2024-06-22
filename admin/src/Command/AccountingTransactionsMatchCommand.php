@@ -12,7 +12,6 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\HttpKernel\KernelInterface;
 
 #[AsCommand(
     name: 'accounting:transactions:match',
@@ -47,20 +46,22 @@ class AccountingTransactionsMatchCommand extends Command
         $matched = 0;
         foreach ($liabilities as $liability) {
             $memberTransactions = $transactionRepository->findBy(
-                ['liability' => null, 'member' => $liability->getMember()]
+                ['member' => $liability->getMember()]
             );
             foreach ($memberTransactions as $transaction) {
                 if (
-                    $transaction->getAmount() === $liability->getAmount()
+                    0 === count($transaction->getLiabilities())
+                    && $transaction->getAmount() === $liability->getAmount()
                     && (
                         strtolower($transaction->getReference()) === strtolower($liability->getReason())
                         || str_contains(strtolower($transaction->getReason()), strtolower($liability->getReason()))
                     )
                 ) {
                     $updatedAt = new \DateTimeImmutable();
-                    $transaction->setLiability($liability);
+                    $transaction->addLiability($liability);
                     $transaction->setUpdatedAt($updatedAt);
                     $liability->setPaidAt($transaction->getPaidAt());
+                    $liability->addTransaction($transaction);
                     $liability->setUpdatedAt($updatedAt);
                     if (!$isDryRun) {
                         $this->entityManager->persist($transaction);

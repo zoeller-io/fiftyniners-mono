@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\FinancialTransactionRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: FinancialTransactionRepository::class)]
@@ -37,14 +39,22 @@ class FinancialTransaction
     #[ORM\Column]
     private array $tags = [];
 
-    #[ORM\ManyToOne(inversedBy: 'transactions')]
-    private ?FinancialLiability $liability = null;
+    /**
+     * @var Collection<int, FinancialLiability>
+     */
+    #[ORM\ManyToMany(targetEntity: FinancialLiability::class, inversedBy: 'transactions')]
+    private Collection $liabilities;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
+
+    public function __construct()
+    {
+        $this->liabilities = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -147,14 +157,26 @@ class FinancialTransaction
         return $this;
     }
 
-    public function getLiability(): ?FinancialLiability
+    /**
+     * @return Collection<int, FinancialLiability>
+     */
+    public function getLiabilities(): Collection
     {
-        return $this->liability;
+        return $this->liabilities;
     }
 
-    public function setLiability(?FinancialLiability $liability): static
+    public function addLiability(FinancialLiability $liability): static
     {
-        $this->liability = $liability;
+        if (!$this->liabilities->contains($liability)) {
+            $this->liabilities->add($liability);
+        }
+
+        return $this;
+    }
+
+    public function removeLiability(FinancialLiability $liability): static
+    {
+        $this->liabilities->removeElement($liability);
 
         return $this;
     }

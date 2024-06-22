@@ -24,7 +24,7 @@ class FinancialTransactionCrudController extends AbstractCrudController
         return [
             IdField::new('id')->setDisabled(),
             AssociationField::new('member'),
-            AssociationField::new('liability'),
+            AssociationField::new('liabilities'),
 //            TextField::new('method'),
             TextField::new('reference'),
             TextField::new('owner')->hideOnIndex(),

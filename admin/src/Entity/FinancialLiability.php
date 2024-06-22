@@ -43,7 +43,7 @@ class FinancialLiability
     /**
      * @var Collection<int, FinancialTransaction>
      */
-    #[ORM\OneToMany(targetEntity: FinancialTransaction::class, mappedBy: 'liability')]
+    #[ORM\ManyToMany(targetEntity: FinancialTransaction::class, mappedBy: 'liabilities')]
     private Collection $transactions;
 
     #[ORM\Column]
@@ -147,6 +147,18 @@ class FinancialLiability
         return $this;
     }
 
+    public function getTags(): array
+    {
+        return $this->tags;
+    }
+
+    public function setTags(array $tags): static
+    {
+        $this->tags = $tags;
+
+        return $this;
+    }
+
     /**
      * @return Collection<int, FinancialTransaction>
      */
@@ -159,7 +171,7 @@ class FinancialLiability
     {
         if (!$this->transactions->contains($transaction)) {
             $this->transactions->add($transaction);
-            $transaction->setLiability($this);
+            $transaction->addLiability($this);
         }
 
         return $this;
@@ -168,23 +180,8 @@ class FinancialLiability
     public function removeTransaction(FinancialTransaction $transaction): static
     {
         if ($this->transactions->removeElement($transaction)) {
-            // set the owning side to null (unless already changed)
-            if ($transaction->getLiability() === $this) {
-                $transaction->setLiability(null);
-            }
+            $transaction->removeLiability($this);
         }
-
-        return $this;
-    }
-
-    public function getTags(): array
-    {
-        return $this->tags;
-    }
-
-    public function setTags(array $tags): static
-    {
-        $this->tags = $tags;
 
         return $this;
     }
@@ -215,8 +212,6 @@ class FinancialLiability
 
     public function __toString(): string
     {
-        return (string)$this->getId();
+        return sprintf("#%d / %s %s (%d)", $this->getId(), $this->getReason(), $this->getMember(), $this->getAmount());
     }
-
-
 }
