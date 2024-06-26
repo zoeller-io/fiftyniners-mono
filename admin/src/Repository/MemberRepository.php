@@ -31,6 +31,17 @@ class MemberRepository extends ServiceEntityRepository
     //        ;
     //    }
 
+    public function findByTag(string $tag): array
+    {
+        $result = $this->createQueryBuilder('m')
+            ->andWhere('m.tags LIKE :tag')
+            ->setParameter('tag', '%' . $tag . '%')
+            ->getQuery()
+            ->getResult();
+
+        return $result;
+    }
+
     public function findOneByBankAccountOwner(string $ownerExpr): ?Member
     {
         $ownerExpr = $this->convertNameExpression($ownerExpr);

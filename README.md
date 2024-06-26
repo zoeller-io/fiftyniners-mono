@@ -15,7 +15,7 @@ Put weekly CSV export from bank account to folder `/tmp` and run
 bin/console accounting:transactions:import
 ```
 
-### Match Transations
+### Match Transactions
 
 Try to match transactions with liabilities with
 
@@ -24,6 +24,18 @@ bin/console accounting:transactions:match
 ```
 
 ### Financial Liability
+
+Assign liabilities to one member with
+
+```shell
+bin/console accounting:liability:assign -a 2500 -t subscription -r "Beitrag 2024" --member 24001
+```
+
+Assign liabilities to multiple members by tag with
+
+```shell
+bin/console accounting:liability:assign -a 2500 -t subscription -r "Beitrag 2024" --tag member_2024
+```
 
 Datatable fields:
 
