@@ -204,4 +204,9 @@ class FinancialTransaction
 
         return $this;
     }
+
+    public function __toString(): string
+    {
+        return sprintf("[#%d] %s / %s / EUR %01.2f", $this->getId(), $this->getPaidAt()->format('Y-m-d'), $this->getMember(), $this->getAmount() / 100);
+    }
 }

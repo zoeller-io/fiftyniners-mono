@@ -214,4 +214,9 @@ class FinancialLiability
     {
         return sprintf("#%d / %s %s (%d)", $this->getId(), $this->getReason(), $this->getMember(), $this->getAmount());
     }
+
+    public function getIsPaid(): bool
+    {
+        return null !== $this->paidAt;
+    }
 }
